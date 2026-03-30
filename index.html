@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ことのは かるた</title>
+  <meta name="description" content="読み札に合う取り札を素早く選ぶ、ブラウザで遊べるかるたアプリ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">JAPANESE KARUTA</p>
+      <h1>ことのは かるた</h1>
+      <p class="subtitle">読み札にあう取り札を、できるだけ速く選ぼう。</p>
+    </header>
+
+    <section class="status" aria-live="polite">
+      <div class="chip"><span>問題</span><strong id="round">0 / 0</strong></div>
+      <div class="chip"><span>スコア</span><strong id="score">0</strong></div>
+      <div class="chip"><span>ミス</span><strong id="miss">0</strong></div>
+      <div class="chip"><span>タイム</span><strong id="time">00.0</strong></div>
+    </section>
+
+    <section class="prompt-wrap">
+      <h2>読み札</h2>
+      <blockquote id="prompt" class="prompt">「開始」を押してゲームスタート！</blockquote>
+      <p id="hint" class="hint"></p>
+    </section>
+
+    <section class="controls">
+      <button id="startBtn" class="btn primary">開始</button>
+      <button id="restartBtn" class="btn ghost" disabled>リスタート</button>
+    </section>
+
+    <section>
+      <h2>取り札</h2>
+      <div id="cards" class="cards" role="list"></div>
+    </section>
+
+    <section id="result" class="result hidden" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
