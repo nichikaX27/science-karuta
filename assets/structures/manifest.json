@@ -1,0 +1,107 @@
+{
+  "pdf": "C:\\Users\\pochi\\新しいフォルダー\\医薬品構造式かるたリスト.pdf",
+  "text_output": "C:\\Users\\pochi\\新しいフォルダー\\karuta_list_extracted.txt",
+  "image_directory": "C:\\Users\\pochi\\新しいフォルダー\\assets\\structures",
+  "total_pages": 6,
+  "empty_text_pages": 6,
+  "images_extracted": 6,
+  "text": [
+    {
+      "page": 1,
+      "text_length": 0
+    },
+    {
+      "page": 2,
+      "text_length": 0
+    },
+    {
+      "page": 3,
+      "text_length": 0
+    },
+    {
+      "page": 4,
+      "text_length": 0
+    },
+    {
+      "page": 5,
+      "text_length": 0
+    },
+    {
+      "page": 6,
+      "text_length": 0
+    }
+  ],
+  "images": [
+    {
+      "page": 1,
+      "images": [
+        "page01_img01.jpeg"
+      ]
+    },
+    {
+      "page": 2,
+      "images": [
+        "page02_img01.jpeg"
+      ]
+    },
+    {
+      "page": 3,
+      "images": [
+        "page03_img01.jpeg"
+      ]
+    },
+    {
+      "page": 4,
+      "images": [
+        "page04_img01.jpeg"
+      ]
+    },
+    {
+      "page": 5,
+      "images": [
+        "page05_img01.jpeg"
+      ]
+    },
+    {
+      "page": 6,
+      "images": [
+        "page06_img01.jpeg"
+      ]
+    }
+  ],
+  "ocr": {
+    "enabled": true,
+    "status": "success",
+    "output": "C:\\Users\\pochi\\新しいフォルダー\\karuta_list_ocr.txt",
+    "empty_text_pages": 0,
+    "pages": [
+      {
+        "page": 1,
+        "text_length": 419
+      },
+      {
+        "page": 2,
+        "text_length": 477
+      },
+      {
+        "page": 3,
+        "text_length": 141
+      },
+      {
+        "page": 4,
+        "text_length": 1637
+      },
+      {
+        "page": 5,
+        "text_length": 1832
+      },
+      {
+        "page": 6,
+        "text_length": 845
+      }
+    ],
+    "lang": "jpn+eng",
+    "tesseract_cmd": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+    "tessdata_dir": "C:\\Users\\pochi\\新しいフォルダー\\tessdata"
+  }
+}

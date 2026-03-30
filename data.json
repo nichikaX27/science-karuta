@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "structure": "assets/cards/structure/card-001.jpg",
+    "hint": "assets/cards/hint/card-001.jpg"
+  },
+  {
+    "id": 2,
+    "structure": "assets/cards/structure/card-002.jpg",
+    "hint": "assets/cards/hint/card-002.jpg"
+  },
+  {
+    "id": 3,
+    "structure": "assets/cards/structure/card-003.jpg",
+    "hint": "assets/cards/hint/card-003.jpg"
+  },
+  {
+    "id": 4,
+    "structure": "assets/cards/structure/card-004.jpg",
+    "hint": "assets/cards/hint/card-004.jpg"
+  },
+  {
+    "id": 5,
+    "structure": "assets/cards/structure/card-005.jpg",
+    "hint": "assets/cards/hint/card-005.jpg"
+  },
+  {
+    "id": 6,
+    "structure": "assets/cards/structure/card-006.jpg",
+    "hint": "assets/cards/hint/card-006.jpg"
+  },
+  {
+    "id": 7,
+    "structure": "assets/cards/structure/card-007.jpg",
+    "hint": "assets/cards/hint/card-007.jpg"
+  },
+  {
+    "id": 8,
+    "structure": "assets/cards/structure/card-008.jpg",
+    "hint": "assets/cards/hint/card-008.jpg"
+  },
+  {
+    "id": 9,
+    "structure": "assets/cards/structure/card-009.jpg",
+    "hint": "assets/cards/hint/card-009.jpg"
+  },
+  {
+    "id": 10,
+    "structure": "assets/cards/structure/card-010.jpg",
+    "hint": "assets/cards/hint/card-010.jpg"
+  },
+  {
+    "id": 11,
+    "structure": "assets/cards/structure/card-011.jpg",
+    "hint": "assets/cards/hint/card-011.jpg"
+  },
+  {
+    "id": 12,
+    "structure": "assets/cards/structure/card-012.jpg",
+    "hint": "assets/cards/hint/card-012.jpg"
+  },
+  {
+    "id": 13,
+    "structure": "assets/cards/structure/card-013.jpg",
+    "hint": "assets/cards/hint/card-013.jpg"
+  },
+  {
+    "id": 14,
+    "structure": "assets/cards/structure/card-014.jpg",
+    "hint": "assets/cards/hint/card-014.jpg"
+  },
+  {
+    "id": 15,
+    "structure": "assets/cards/structure/card-015.jpg",
+    "hint": "assets/cards/hint/card-015.jpg"
+  },
+  {
+    "id": 16,
+    "structure": "assets/cards/structure/card-016.jpg",
+    "hint": "assets/cards/hint/card-016.jpg"
+  },
+  {
+    "id": 17,
+    "structure": "assets/cards/structure/card-017.jpg",
+    "hint": "assets/cards/hint/card-017.jpg"
+  },
+  {
+    "id": 18,
+    "structure": "assets/cards/structure/card-018.jpg",
+    "hint": "assets/cards/hint/card-018.jpg"
+  },
+  {
+    "id": 19,
+    "structure": "assets/cards/structure/card-019.jpg",
+    "hint": "assets/cards/hint/card-019.jpg"
+  },
+  {
+    "id": 20,
+    "structure": "assets/cards/structure/card-020.jpg",
+    "hint": "assets/cards/hint/card-020.jpg"
+  },
+  {
+    "id": 21,
+    "structure": "assets/cards/structure/card-021.jpg",
+    "hint": "assets/cards/hint/card-021.jpg"
+  },
+  {
+    "id": 22,
+    "structure": "assets/cards/structure/card-022.jpg",
+    "hint": "assets/cards/hint/card-022.jpg"
+  },
+  {
+    "id": 23,
+    "structure": "assets/cards/structure/card-023.jpg",
+    "hint": "assets/cards/hint/card-023.jpg"
+  },
+  {
+    "id": 24,
+    "structure": "assets/cards/structure/card-024.jpg",
+    "hint": "assets/cards/hint/card-024.jpg"
+  },
+  {
+    "id": 25,
+    "structure": "assets/cards/structure/card-025.jpg",
+    "hint": "assets/cards/hint/card-025.jpg"
+  },
+  {
+    "id": 26,
+    "structure": "assets/cards/structure/card-026.jpg",
+    "hint": "assets/cards/hint/card-026.jpg"
+  },
+  {
+    "id": 27,
+    "structure": "assets/cards/structure/card-027.jpg",
+    "hint": "assets/cards/hint/card-027.jpg"
+  },
+  {
+    "id": 28,
+    "structure": "assets/cards/structure/card-028.jpg",
+    "hint": "assets/cards/hint/card-028.jpg"
+  },
+  {
+    "id": 29,
+    "structure": "assets/cards/structure/card-029.jpg",
+    "hint": "assets/cards/hint/card-029.jpg"
+  },
+  {
+    "id": 30,
+    "structure": "assets/cards/structure/card-030.jpg",
+    "hint": "assets/cards/hint/card-030.jpg"
+  },
+  {
+    "id": 31,
+    "structure": "assets/cards/structure/card-031.jpg",
+    "hint": "assets/cards/hint/card-031.jpg"
+  },
+  {
+    "id": 32,
+    "structure": "assets/cards/structure/card-032.jpg",
+    "hint": "assets/cards/hint/card-032.jpg"
+  },
+  {
+    "id": 33,
+    "structure": "assets/cards/structure/card-033.jpg",
+    "hint": "assets/cards/hint/card-033.jpg"
+  },
+  {
+    "id": 34,
+    "structure": "assets/cards/structure/card-034.jpg",
+    "hint": "assets/cards/hint/card-034.jpg"
+  },
+  {
+    "id": 35,
+    "structure": "assets/cards/structure/card-035.jpg",
+    "hint": "assets/cards/hint/card-035.jpg"
+  },
+  {
+    "id": 36,
+    "structure": "assets/cards/structure/card-036.jpg",
+    "hint": "assets/cards/hint/card-036.jpg"
+  },
+  {
+    "id": 37,
+    "structure": "assets/cards/structure/card-037.jpg",
+    "hint": "assets/cards/hint/card-037.jpg"
+  },
+  {
+    "id": 38,
+    "structure": "assets/cards/structure/card-038.jpg",
+    "hint": "assets/cards/hint/card-038.jpg"
+  },
+  {
+    "id": 39,
+    "structure": "assets/cards/structure/card-039.jpg",
+    "hint": "assets/cards/hint/card-039.jpg"
+  },
+  {
+    "id": 40,
+    "structure": "assets/cards/structure/card-040.jpg",
+    "hint": "assets/cards/hint/card-040.jpg"
+  },
+  {
+    "id": 41,
+    "structure": "assets/cards/structure/card-041.jpg",
+    "hint": "assets/cards/hint/card-041.jpg"
+  },
+  {
+    "id": 42,
+    "structure": "assets/cards/structure/card-042.jpg",
+    "hint": "assets/cards/hint/card-042.jpg"
+  },
+  {
+    "id": 43,
+    "structure": "assets/cards/structure/card-043.jpg",
+    "hint": "assets/cards/hint/card-043.jpg"
+  },
+  {
+    "id": 44,
+    "structure": "assets/cards/structure/card-044.jpg",
+    "hint": "assets/cards/hint/card-044.jpg"
+  },
+  {
+    "id": 45,
+    "structure": "assets/cards/structure/card-045.jpg",
+    "hint": "assets/cards/hint/card-045.jpg"
+  },
+  {
+    "id": 46,
+    "structure": "assets/cards/structure/card-046.jpg",
+    "hint": "assets/cards/hint/card-046.jpg"
+  },
+  {
+    "id": 47,
+    "structure": "assets/cards/structure/card-047.jpg",
+    "hint": "assets/cards/hint/card-047.jpg"
+  },
+  {
+    "id": 48,
+    "structure": "assets/cards/structure/card-048.jpg",
+    "hint": "assets/cards/hint/card-048.jpg"
+  },
+  {
+    "id": 49,
+    "structure": "assets/cards/structure/card-049.jpg",
+    "hint": "assets/cards/hint/card-049.jpg"
+  },
+  {
+    "id": 50,
+    "structure": "assets/cards/structure/card-050.jpg",
+    "hint": "assets/cards/hint/card-050.jpg"
+  }
+]

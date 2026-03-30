@@ -1,199 +1,290 @@
-const KARUTA_DATA = [
-  { id: 1, yomifuda: "ちはやぶる 神代もきかず 竜田川", torifuda: "からくれなゐに 水くくるとは" },
-  { id: 2, yomifuda: "春過ぎて 夏来にけらし 白妙の", torifuda: "衣ほすてふ 天の香具山" },
-  { id: 3, yomifuda: "あしびきの 山鳥の尾の しだり尾の", torifuda: "ながながし夜を ひとりかも寝む" },
-  { id: 4, yomifuda: "田子の浦に うち出でてみれば 白妙の", torifuda: "富士の高嶺に 雪は降りつつ" },
-  { id: 5, yomifuda: "奥山に 紅葉踏みわけ 鳴く鹿の", torifuda: "声きく時ぞ 秋は悲しき" },
-  { id: 6, yomifuda: "かささぎの 渡せる橋に おく霜の", torifuda: "白きを見れば 夜ぞ更けにける" },
-  { id: 7, yomifuda: "天の原 ふりさけ見れば 春日なる", torifuda: "三笠の山に 出でし月かも" },
-  { id: 8, yomifuda: "わが庵は 都のたつみ しかぞ住む", torifuda: "世をうぢ山と 人はいふなり" },
-  { id: 9, yomifuda: "花の色は うつりにけりな いたづらに", torifuda: "わが身世にふる ながめせしまに" },
-  { id: 10, yomifuda: "これやこの 行くも帰るも 別れては", torifuda: "知るも知らぬも 逢坂の関" },
-  { id: 11, yomifuda: "わたの原 八十島かけて 漕ぎ出でぬと", torifuda: "人には告げよ あまの釣舟" },
-  { id: 12, yomifuda: "天つ風 雲の通ひ路 吹きとぢよ", torifuda: "をとめの姿 しばしとどめむ" },
-  { id: 13, yomifuda: "筑波嶺の 峰より落つる みなの川", torifuda: "恋ぞつもりて 淵となりぬる" },
-  { id: 14, yomifuda: "陸奥の しのぶもぢずり 誰ゆゑに", torifuda: "乱れそめにし 我ならなくに" },
-  { id: 15, yomifuda: "君がため 春の野に出でて 若菜つむ", torifuda: "わが衣手に 雪は降りつつ" },
-  { id: 16, yomifuda: "立ち別れ いなばの山の 峰に生ふる", torifuda: "まつとし聞かば 今帰り来む" },
-  { id: 17, yomifuda: "ちはやぶる 神代もきかず 龍田川", torifuda: "からくれなゐに 水くくるとは" },
-  { id: 18, yomifuda: "住の江の 岸に寄る波 よるさへや", torifuda: "夢の通ひ路 人目よくらむ" },
-  { id: 19, yomifuda: "難波潟 短き蘆の ふしの間も", torifuda: "逢はでこの世を 過ぐしてよとや" },
-  { id: 20, yomifuda: "わびぬれば 今はた同じ 難波なる", torifuda: "みをつくしても 逢はむとぞ思ふ" }
-];
+/* =====================================
+   医薬品構造式かるた — アプリロジック
+===================================== */
 
-const TOTAL_QUESTIONS = 10;
-const CHOICE_COUNT = 8;
+const STORAGE_KEY = 'karuta_known';
+const HINT_MODE_KEY = 'karuta_hint_mode';
 
-const state = {
-  pool: [],
-  current: null,
-  questionIndex: 0,
-  score: 0,
-  miss: 0,
-  startedAt: null,
-  timerId: null,
-  finished: false
-};
+// ---- 状態 ----
+let allCards     = [];   // data.json から読み込んだ全カード
+let playlist     = [];   // 現在の表示順リスト（card index の配列）
+let playIndex    = 0;    // playlist 内の現在位置
+let isFlipped    = false;
+let knownIds     = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+let hintFirst    = JSON.parse(localStorage.getItem(HINT_MODE_KEY) || 'false');
+let unknownOnly  = false;
+let shuffleMode  = false;
 
-const roundEl = document.getElementById("round");
-const scoreEl = document.getElementById("score");
-const missEl = document.getElementById("miss");
-const timeEl = document.getElementById("time");
-const promptEl = document.getElementById("prompt");
-const hintEl = document.getElementById("hint");
-const cardsEl = document.getElementById("cards");
-const resultEl = document.getElementById("result");
-const startBtn = document.getElementById("startBtn");
-const restartBtn = document.getElementById("restartBtn");
+// ---- DOM ----
+const cardEl       = document.getElementById('card');
+const cardScene    = document.getElementById('cardScene');
+const structureImg = document.getElementById('structureImg');
+const hintImg      = document.getElementById('hintImg');
+const cardNumFront = document.getElementById('cardNumFront');
+const cardNumBack  = document.getElementById('cardNumBack');
+const cardCounter  = document.getElementById('cardCounter');
+const progressBar  = document.getElementById('progressBar');
+const statsEl      = document.getElementById('stats');
+const cardGrid     = document.getElementById('cardGrid');
 
-function shuffle(array) {
-  const copy = [...array];
-  for (let i = copy.length - 1; i > 0; i--) {
+const btnPrev        = document.getElementById('btnPrev');
+const btnNext        = document.getElementById('btnNext');
+const btnKnown       = document.getElementById('btnKnown');
+const btnUnknown     = document.getElementById('btnUnknown');
+const btnReset       = document.getElementById('btnReset');
+const btnShowHint    = document.getElementById('btnShowHint');
+const chkUnknownOnly = document.getElementById('chkUnknownOnly');
+const chkShuffle     = document.getElementById('chkShuffle');
+
+// ---- 初期化 ----
+async function init() {
+  const res = await fetch('data.json');
+  allCards   = await res.json();
+
+  buildPlaylist();
+  buildGrid();
+  renderCard();
+  updateProgress();
+
+  // ヒントモードボタン初期ラベル
+  updateHintModeLabel();
+}
+
+// ---- プレイリスト構築 ----
+function buildPlaylist() {
+  let src = allCards.map((_, i) => i);
+  if (unknownOnly) src = src.filter(i => !knownIds.has(allCards[i].id));
+  if (shuffleMode) src = shuffle(src);
+  playlist  = src;
+  playIndex = 0;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return copy;
+  return a;
 }
 
-function formatTime(ms) {
-  return (ms / 1000).toFixed(1).padStart(4, "0");
-}
-
-function updateStatus() {
-  roundEl.textContent = `${state.questionIndex} / ${TOTAL_QUESTIONS}`;
-  scoreEl.textContent = String(state.score);
-  missEl.textContent = String(state.miss);
-}
-
-function updateTimer() {
-  if (!state.startedAt) {
-    timeEl.textContent = "00.0";
-    return;
-  }
-  const elapsed = Date.now() - state.startedAt;
-  timeEl.textContent = formatTime(elapsed);
-}
-
-function renderCards(choices) {
-  cardsEl.innerHTML = "";
-
-  choices.forEach((item) => {
-    const button = document.createElement("button");
-    button.className = "card";
-    button.type = "button";
-    button.setAttribute("role", "listitem");
-    button.textContent = item.torifuda;
-
-    button.addEventListener("click", () => {
-      if (state.finished || !state.current) {
-        return;
-      }
-
-      const isCorrect = item.id === state.current.id;
-      if (isCorrect) {
-        state.score += 1;
-        hintEl.textContent = "正解！ 次の札へ。";
-        button.classList.add("ok");
-        disableCards();
-        setTimeout(nextQuestion, 420);
-      } else {
-        state.miss += 1;
-        hintEl.textContent = "お手つき！ もう一度。";
-        button.classList.add("ng");
-        setTimeout(() => {
-          button.classList.remove("ng");
-        }, 260);
-      }
-
-      updateStatus();
-    });
-
-    cardsEl.appendChild(button);
-  });
-}
-
-function disableCards() {
-  const buttons = cardsEl.querySelectorAll("button");
-  buttons.forEach((btn) => {
-    btn.disabled = true;
-  });
-}
-
-function pickChoices(answer) {
-  const others = shuffle(KARUTA_DATA.filter((item) => item.id !== answer.id)).slice(0, CHOICE_COUNT - 1);
-  return shuffle([answer, ...others]);
-}
-
-function nextQuestion() {
-  if (state.questionIndex >= TOTAL_QUESTIONS) {
-    finishGame();
+// ---- カード描画 ----
+function renderCard() {
+  if (playlist.length === 0) {
+    structureImg.src = '';
+    hintImg.src      = '';
+    cardNumFront.textContent = cardNumBack.textContent = '';
+    cardCounter.textContent  = '0 / 0';
+    cardScene.className      = 'card-scene';
     return;
   }
 
-  state.current = state.pool[state.questionIndex];
-  state.questionIndex += 1;
+  const idx  = playlist[playIndex];
+  const card = allCards[idx];
+  const num  = `医薬品 No.${String(card.id).padStart(2, '0')}`;
 
-  promptEl.textContent = `「${state.current.yomifuda}」`;
-  hintEl.textContent = "取り札を選んでください";
-
-  const choices = pickChoices(state.current);
-  renderCards(choices);
-  updateStatus();
-}
-
-function startGame() {
-  state.pool = shuffle(KARUTA_DATA).slice(0, TOTAL_QUESTIONS);
-  state.current = null;
-  state.questionIndex = 0;
-  state.score = 0;
-  state.miss = 0;
-  state.finished = false;
-  state.startedAt = Date.now();
-
-  if (state.timerId) {
-    clearInterval(state.timerId);
+  // 表面と裏面を hintFirst モードで切り替え
+  const frontLabel = cardEl.querySelector('.card-front .card-label');
+  const backLabel  = cardEl.querySelector('.card-back .card-label');
+  if (hintFirst) {
+    frontLabel.textContent = '読み札（ヒント）';
+    backLabel.textContent  = '取り札（構造式）';
+    structureImg.src = card.hint;
+    hintImg.src      = card.structure;
+  } else {
+    frontLabel.textContent = '取り札（構造式）';
+    backLabel.textContent  = '読み札（ヒント）';
+    structureImg.src = card.structure;
+    hintImg.src      = card.hint;
   }
 
-  state.timerId = setInterval(updateTimer, 100);
-  updateTimer();
-  updateStatus();
+  cardNumFront.textContent = num;
+  cardNumBack.textContent  = num;
 
-  resultEl.classList.add("hidden");
-  resultEl.innerHTML = "";
-  startBtn.disabled = true;
-  restartBtn.disabled = false;
+  // 習得済みバッジ
+  cardScene.className = 'card-scene' + (knownIds.has(card.id) ? ' known' : '');
 
-  nextQuestion();
+  // フリップをリセット
+  setFlipped(false);
+
+  // カウンタ
+  cardCounter.textContent = `${playIndex + 1} / ${playlist.length}`;
+
+  // グリッドのアクティブ表示
+  document.querySelectorAll('.grid-thumb').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.id) === card.id);
+  });
 }
 
-function finishGame() {
-  state.finished = true;
-  disableCards();
+function setFlipped(v) {
+  isFlipped = v;
+  cardEl.classList.toggle('flipped', v);
+}
 
-  if (state.timerId) {
-    clearInterval(state.timerId);
-    state.timerId = null;
+// ---- ナビゲーション ----
+function goNext() {
+  if (playlist.length === 0) return;
+  playIndex = (playIndex + 1) % playlist.length;
+  renderCard();
+}
+
+function goPrev() {
+  if (playlist.length === 0) return;
+  playIndex = (playIndex - 1 + playlist.length) % playlist.length;
+  renderCard();
+}
+
+function jumpToCard(id) {
+  const idx = playlist.findIndex(i => allCards[i].id === id);
+  if (idx !== -1) {
+    playIndex = idx;
+    renderCard();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  const elapsed = Date.now() - state.startedAt;
-  const accuracy = Math.round((state.score / (state.score + state.miss || 1)) * 100);
-
-  promptEl.textContent = "おつかれさま！";
-  hintEl.textContent = "結果を確認してもう一度挑戦できます。";
-
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML = `
-    <h3>結果</h3>
-    <p>クリアタイム: <strong>${formatTime(elapsed)} 秒</strong></p>
-    <p>正解: <strong>${state.score}</strong> / ${TOTAL_QUESTIONS}</p>
-    <p>ミス: <strong>${state.miss}</strong></p>
-    <p>正答率: <strong>${accuracy}%</strong></p>
-  `;
-
-  startBtn.disabled = false;
 }
 
-startBtn.addEventListener("click", startGame);
-restartBtn.addEventListener("click", startGame);
-updateStatus();
-updateTimer();
+// ---- 習得マーク ----
+function markKnown(id) {
+  knownIds.add(id);
+  saveKnown();
+  updateProgress();
+  updateGridThumb(id);
+  cardScene.className = 'card-scene known';
+}
+
+function markUnknown(id) {
+  knownIds.delete(id);
+  saveKnown();
+  updateProgress();
+  updateGridThumb(id);
+  cardScene.className = 'card-scene';
+}
+
+function saveKnown() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...knownIds]));
+}
+
+// ---- 進捗更新 ----
+function updateProgress() {
+  const pct = allCards.length > 0 ? (knownIds.size / allCards.length) * 100 : 0;
+  progressBar.style.width = pct + '%';
+  statsEl.textContent     = `${knownIds.size} / ${allCards.length} 習得`;
+}
+
+// ---- グリッド構築 ----
+function buildGrid() {
+  cardGrid.innerHTML = '';
+  allCards.forEach(card => {
+    const div = document.createElement('div');
+    div.className  = 'grid-thumb' + (knownIds.has(card.id) ? ' known' : '');
+    div.dataset.id = card.id;
+
+    const img   = document.createElement('img');
+    img.src     = card.structure;
+    img.alt     = `医薬品 ${card.id}`;
+    img.loading = 'lazy';
+
+    const num   = document.createElement('div');
+    num.className   = 'thumb-num';
+    num.textContent = card.id;
+
+    const check   = document.createElement('div');
+    check.className   = 'thumb-check';
+    check.textContent = '✓';
+
+    div.appendChild(img);
+    div.appendChild(num);
+    div.appendChild(check);
+    div.addEventListener('click', () => jumpToCard(card.id));
+    cardGrid.appendChild(div);
+  });
+}
+
+function updateGridThumb(id) {
+  const thumb = cardGrid.querySelector(`[data-id="${id}"]`);
+  if (thumb) thumb.classList.toggle('known', knownIds.has(id));
+}
+
+// ---- ヒントモード ----
+function updateHintModeLabel() {
+  btnShowHint.textContent = hintFirst ? '構造式を先に表示' : 'ヒントを先に表示';
+}
+
+// ---- イベント ----
+cardScene.addEventListener('click', () => setFlipped(!isFlipped));
+
+btnNext.addEventListener('click', (e) => { e.stopPropagation(); goNext(); });
+btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goPrev(); });
+
+btnKnown.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (playlist.length === 0) return;
+  const id = allCards[playlist[playIndex]].id;
+  markKnown(id);
+  goNext();
+});
+
+btnUnknown.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (playlist.length === 0) return;
+  const id = allCards[playlist[playIndex]].id;
+  markUnknown(id);
+  goNext();
+});
+
+btnReset.addEventListener('click', () => {
+  if (!confirm('学習の進捗をすべてリセットしますか？')) return;
+  knownIds.clear();
+  saveKnown();
+  updateProgress();
+  document.querySelectorAll('.grid-thumb').forEach(el => el.classList.remove('known'));
+  renderCard();
+});
+
+btnShowHint.addEventListener('click', () => {
+  hintFirst = !hintFirst;
+  localStorage.setItem(HINT_MODE_KEY, JSON.stringify(hintFirst));
+  updateHintModeLabel();
+  renderCard();
+});
+
+chkUnknownOnly.addEventListener('change', () => {
+  unknownOnly = chkUnknownOnly.checked;
+  buildPlaylist();
+  renderCard();
+});
+
+chkShuffle.addEventListener('change', () => {
+  shuffleMode = chkShuffle.checked;
+  buildPlaylist();
+  renderCard();
+});
+
+// キーボード操作
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext();
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goPrev();
+  else if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    setFlipped(!isFlipped);
+  } else if (e.key === 'k' || e.key === 'K') {
+    if (playlist.length > 0) { markKnown(allCards[playlist[playIndex]].id); goNext(); }
+  } else if (e.key === 'u' || e.key === 'U') {
+    if (playlist.length > 0) { markUnknown(allCards[playlist[playIndex]].id); goNext(); }
+  }
+});
+
+// スワイプ対応
+let touchStartX = 0;
+cardScene.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+cardScene.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) {
+    dx < 0 ? goNext() : goPrev();
+  }
+}, { passive: true });
+
+// ---- 起動 ----
+init();

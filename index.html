@@ -1,50 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ことのは かるた</title>
-  <meta name="description" content="読み札に合う取り札を素早く選ぶ、ブラウザで遊べるかるたアプリ">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+  <title>医薬品構造式かるた</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="bg-pattern" aria-hidden="true"></div>
+  <header>
+    <h1>医薬品構造式かるた</h1>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="stats" id="stats">0 / 50 習得</div>
+  </header>
 
-  <main class="app">
-    <header class="hero">
-      <p class="eyebrow">JAPANESE KARUTA</p>
-      <h1>ことのは かるた</h1>
-      <p class="subtitle">読み札にあう取り札を、できるだけ速く選ぼう。</p>
-    </header>
+  <main>
+    <!-- カードエリア -->
+    <div class="card-scene" id="cardScene">
+      <div class="card" id="card">
+        <div class="card-face card-front" id="cardFront">
+          <div class="card-label">取り札（構造式）</div>
+          <img id="structureImg" src="" alt="構造式">
+          <div class="card-num" id="cardNumFront"></div>
+        </div>
+        <div class="card-face card-back" id="cardBack">
+          <div class="card-label">読み札（ヒント）</div>
+          <img id="hintImg" src="" alt="ヒント">
+          <div class="card-num" id="cardNumBack"></div>
+        </div>
+      </div>
+    </div>
 
-    <section class="status" aria-live="polite">
-      <div class="chip"><span>問題</span><strong id="round">0 / 0</strong></div>
-      <div class="chip"><span>スコア</span><strong id="score">0</strong></div>
-      <div class="chip"><span>ミス</span><strong id="miss">0</strong></div>
-      <div class="chip"><span>タイム</span><strong id="time">00.0</strong></div>
-    </section>
+    <p class="flip-hint" id="flipHint">クリック / タップで裏返す</p>
 
-    <section class="prompt-wrap">
-      <h2>読み札</h2>
-      <blockquote id="prompt" class="prompt">「開始」を押してゲームスタート！</blockquote>
-      <p id="hint" class="hint"></p>
-    </section>
+    <!-- 学習ボタン -->
+    <div class="learn-buttons" id="learnButtons">
+      <button class="btn btn-known" id="btnKnown">✓ 覚えた</button>
+      <button class="btn btn-unknown" id="btnUnknown">✗ まだ</button>
+    </div>
 
-    <section class="controls">
-      <button id="startBtn" class="btn primary">開始</button>
-      <button id="restartBtn" class="btn ghost" disabled>リスタート</button>
-    </section>
-
-    <section>
-      <h2>取り札</h2>
-      <div id="cards" class="cards" role="list"></div>
-    </section>
-
-    <section id="result" class="result hidden" aria-live="polite"></section>
+    <!-- ナビゲーション -->
+    <div class="nav-buttons">
+      <button class="btn btn-nav" id="btnPrev">◀ 前へ</button>
+      <span class="card-counter" id="cardCounter">1 / 50</span>
+      <button class="btn btn-nav" id="btnNext">次へ ▶</button>
+    </div>
   </main>
+
+  <!-- コントロールパネル -->
+  <div class="control-panel">
+    <div class="control-row">
+      <label>
+        <input type="checkbox" id="chkUnknownOnly">
+        未習得カードのみ表示
+      </label>
+      <label>
+        <input type="checkbox" id="chkShuffle">
+        シャッフル
+      </label>
+    </div>
+    <div class="control-row">
+      <button class="btn btn-sm" id="btnReset">進捗をリセット</button>
+      <button class="btn btn-sm" id="btnShowHint">ヒント先に表示</button>
+    </div>
+  </div>
+
+  <!-- 全カード一覧 -->
+  <section class="overview-section">
+    <h2>カード一覧</h2>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <footer>
+    <p>医薬品構造式かるた — GitHub Pages</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
