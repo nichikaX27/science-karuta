@@ -18,8 +18,10 @@ let shuffleMode  = false;
 // ---- DOM ----
 const cardEl       = document.getElementById('card');
 const cardScene    = document.getElementById('cardScene');
-const structureImg = document.getElementById('structureImg');
-const hintImg      = document.getElementById('hintImg');
+const structureImg     = document.getElementById('structureImg');
+const structureImgBack = document.getElementById('structureImgBack');
+const hintTextFront    = document.getElementById('hintTextFront');
+const hintTextBack     = document.getElementById('hintTextBack');
 const cardNumFront = document.getElementById('cardNumFront');
 const cardNumBack  = document.getElementById('cardNumBack');
 const cardCounter  = document.getElementById('cardCounter');
@@ -71,8 +73,9 @@ function shuffle(arr) {
 // ---- カード描画 ----
 function renderCard() {
   if (playlist.length === 0) {
-    structureImg.src = '';
-    hintImg.src      = '';
+    structureImg.src    = '';
+    hintTextFront.textContent = '';
+    hintTextBack.textContent  = '';
     cardNumFront.textContent = cardNumBack.textContent = '';
     cardCounter.textContent  = '0 / 0';
     cardScene.className      = 'card-scene';
@@ -89,13 +92,27 @@ function renderCard() {
   if (hintFirst) {
     frontLabel.textContent = '読み札（ヒント）';
     backLabel.textContent  = '取り札（構造式）';
-    structureImg.src = card.hint;
-    hintImg.src      = card.structure;
+    // 表面: ヒントテキスト
+    structureImg.style.display    = 'none';
+    hintTextFront.textContent     = card.hint;
+    hintTextFront.style.display   = '';
+    // 裏面: 構造式
+    structureImgBack.src          = card.structure;
+    structureImgBack.style.display = '';
+    hintTextBack.textContent      = '';
+    hintTextBack.style.display    = 'none';
   } else {
     frontLabel.textContent = '取り札（構造式）';
     backLabel.textContent  = '読み札（ヒント）';
-    structureImg.src = card.structure;
-    hintImg.src      = card.hint;
+    // 表面: 構造式
+    structureImg.src              = card.structure;
+    structureImg.style.display    = '';
+    hintTextFront.textContent     = '';
+    hintTextFront.style.display   = 'none';
+    // 裏面: ヒントテキスト
+    structureImgBack.style.display = 'none';
+    hintTextBack.textContent      = card.hint;
+    hintTextBack.style.display    = '';
   }
 
   cardNumFront.textContent = num;

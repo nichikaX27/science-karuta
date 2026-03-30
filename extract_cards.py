@@ -80,6 +80,67 @@ def detect_row_bounds(arr, n_rows, threshold=20, min_gap=50, large_section_thres
     return row_bounds[:n_rows]
 
 
+def detect_col_bounds(arr, n_cols=5, threshold=5, min_dark_width=10, search_window=250,
+                      bleed_trim=50):
+    """
+    列間の暗いギャップ（印刷の余白）を検出して col_bounds を返す。
+    各列の等分割境界付近でギャップを探し、見つかればギャップ中点を使用、
+    見つからなければ等分割境界にフォールバックする。
+    フォールバック境界の右側列は bleed_trim px 分左端をトリムして
+    隣カードのラベル映り込みを防ぐ。
+    """
+    W = arr.shape[1]
+    col_max = arr.max(axis=0)
+    is_dark = col_max <= threshold
+
+    # 幅 min_dark_width 以上の連続darkゾーンを収集
+    dark_zones = []
+    in_d = False; s = None
+    for x in range(W):
+        if is_dark[x] and not in_d:
+            s = x; in_d = True
+        elif not is_dark[x] and in_d:
+            dark_zones.append((s, x)); in_d = False
+    if in_d:
+        dark_zones.append((s, W))
+    sig_dark = [(s, e) for s, e in dark_zones if e - s >= min_dark_width]
+
+    # 等分割境界 (境界数 = n_cols - 1)
+    equal_dividers = [int(W * c / n_cols) for c in range(1, n_cols)]
+
+    # 各等分割境界について最近傍のdarkゾーンを探す
+    actual_dividers = []
+    is_gap_based = []  # True=ギャップ検出, False=フォールバック
+    for eq in equal_dividers:
+        best = None
+        best_dist = search_window + 1
+        for s, e in sig_dark:
+            mid = (s + e) // 2
+            dist = abs(mid - eq)
+            if dist < best_dist:
+                best_dist = dist
+                best = (s + e) // 2
+        if best is not None and best_dist <= search_window:
+            actual_dividers.append(best)
+            is_gap_based.append(True)
+        else:
+            actual_dividers.append(eq)  # フォールバック
+            is_gap_based.append(False)
+
+    # 境界から col_bounds を生成
+    # フォールバック境界の右側列は bleed_trim px トリムして隣ラベルの映り込みを防ぐ
+    dividers = [0] + sorted(actual_dividers) + [W]
+    col_bounds = []
+    for c in range(n_cols):
+        x0 = dividers[c]
+        x1 = dividers[c + 1]
+        # c>0 かつ左境界がフォールバックの場合: 左端をトリム
+        if c > 0 and not is_gap_based[c - 1]:
+            x0 = min(x0 + bleed_trim, x1)
+        col_bounds.append((x0, x1))
+    return col_bounds, is_gap_based
+
+
 def autocrop_cell(cell_img, threshold=20, pad=20):
     arr  = np.array(cell_img.convert('L'))
     mask = arr > threshold
@@ -109,18 +170,14 @@ def extract_page(img_path, offset, n_cards, out_dir, flip180=False):
 
     # 実際のコンテンツ境界を自動検出
     row_bounds = detect_row_bounds(arr, n_rows)
-    # 列境界は均等5分割 + 左右150pxパディング（コンテンツが均等境界からずれても取りこぼさない）
-    # autocrop_cell で余白は後から除去する
-    col_pad = 150
-    col_bounds = [
-        (max(0, int(W * c / 5) - col_pad), min(W, int(W * (c + 1) / 5) + col_pad))
-        for c in range(5)
-    ]
+    # 列境界を暗いギャップから自動検出（隣カードの映り込みを防ぐ）
+    col_bounds, is_gap_based = detect_col_bounds(arr)
 
     grid = make_grid(n_cards)
     rotation = Image.Transpose.ROTATE_270 if flip180 else Image.Transpose.ROTATE_90
     print(f"\n--- {img_path} ({W}x{H}), {n_cards} cards, offset={offset}, flip180={flip180} ---")
     print(f"  row_bounds: {row_bounds}")
+    print(f"  col_bounds: {col_bounds}  fallback: {[i for i,g in enumerate(is_gap_based) if not g]}")
 
     for rel_id, (row_idx, col_idx) in sorted(grid.items()):
         abs_id = offset + rel_id
